@@ -2,7 +2,7 @@ record:
 	singular: record
 	plural: records
 	fields:
+		id: _suppress
+		created_timestamp: _suppress
 		field: string
 		value: text
-		model: string
-		id: number
