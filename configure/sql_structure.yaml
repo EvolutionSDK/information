@@ -4,5 +4,6 @@ record:
 	fields:
 		id: _suppress
 		created_timestamp: _suppress
+		category: string
 		field: string
 		value: text
