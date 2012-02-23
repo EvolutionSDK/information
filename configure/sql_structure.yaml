@@ -1,0 +1,8 @@
+record:
+	singular: record
+	plural: records
+	fields:
+		field: string
+		value: text
+		model: string
+		id: number
