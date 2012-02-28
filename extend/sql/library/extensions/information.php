@@ -31,6 +31,12 @@ class Information {
 		e::information()->accessor($model)->$key = $val;
 	}
 
+	public function modelIsset(Model $model, $key) {
+		if(strlen(e::information()->accessor($model)->$key) > 0)
+			return true;
+		else return null;
+	}
+
 	public function modelGet(Model $model, $key) {
 		return e::information()->accessor($model)->$key;
 	}
