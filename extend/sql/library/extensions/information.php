@@ -28,6 +28,13 @@ class Information {
 	}
 
 	public function modelSet(Model $model, $key, $val) {
+		foreach(e::$events->informationSet($model, $key, $val) as $bundle => $result) {
+			if(is_null($result)) continue;
+			if($result === false) return;
+			
+			$val = $result;
+		}
+		
 		e::information()->accessor($model)->$key = $val;
 	}
 
