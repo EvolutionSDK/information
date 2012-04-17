@@ -53,7 +53,11 @@ class Information {
 	}
 
 	public function modelList(Model $model) {
-		return e::information()->accessor($model)->listRecords();
+		static $cache = array();
+
+		if(!isset($cache[$model->__map()]))
+			$cache[$model->__map()] = e::information()->accessor($model)->listRecords();
+		return $cache[$model->__map()];
 	}
 
 }
