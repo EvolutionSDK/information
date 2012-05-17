@@ -22,9 +22,9 @@ class Bundle extends SQLBundle {
 		return new Accessor('information.record', '/');
 	}
 
-	public function accessor(Model $model) {
+	public function accessor(Model $model, $type = 'user') {
 		$tableName = "\$information ".$model->__getTable();
-		return new Accessor($tableName, $model->id);
+		return new Accessor($tableName, $model->id, $type);
 	}
 
 }
@@ -39,10 +39,12 @@ class Accessor {
 	private $base64 = false;
 	private $table;
 	private $id;
+	private $type;
 
-	public function __construct($table, $id) {
+	public function __construct($table, $id, $type = 'user') {
 		$this->table = $table;
 		$this->id = $id;
+		$this->type = $type;
 	}
 
 	public function b64() {
@@ -52,38 +54,38 @@ class Accessor {
 
 	public function getRecord($field) {
 		$field = mysql_escape_string($field);
-		$owner = $this->table !== 'information.record' ? "AND `owner` = '$this->id'" : "AND `category` = '$this->id'";
+		$owner = $this->table !== 'information.record' ? "`owner` = '$this->id'" : "AND `category` = '$this->id'";
 		if(!is_numeric($this->id) && $this->id == '*') return false;
-		return e::$sql->query("SELECT `field`, `value` FROM `$this->table` WHERE `field` = '$field' $owner")->row();
+		return e::$sql->query("SELECT `field`, `value` FROM `$this->table` WHERE `type` = '$this->type' AND `field` = '$field' AND $owner")->row();
 	}
 
 	public function listRecords() {
-		$owner = $this->table !== 'information.record' ? "WHERE `owner` = '$this->id'" : "WHERE `category` = '$this->id'";
+		$owner = $this->table !== 'information.record' ? "AND `owner` = '$this->id'" : "`category` = '$this->id'";
 		if(!is_numeric($this->id) && $this->id == '*') $owner = '';
-		return e::$sql->query("SELECT `field`, `value`, `updated_timestamp` FROM `$this->table` $owner")->all();
+		return e::$sql->query("SELECT `field`, `value`, `updated_timestamp` FROM `$this->table` WHERE `type` = '$this->type' $owner")->all();
 	}
 
 	public function delRecord($field) {
 		$field = mysql_escape_string($field);
-		$owner = $this->table !== 'information.record' ? "AND `owner` = '$this->id'" : "AND `category` = '$this->id'";
+		$owner = $this->table !== 'information.record' ? "`owner` = '$this->id'" : "AND `category` = '$this->id'";
 		if(!is_numeric($this->id) && $this->id == '*') return false;
-		return e::$sql->query("DELETE FROM `$this->table` WHERE `field` = '$field' $owner");
+		return e::$sql->query("DELETE FROM `$this->table` WHERE `type` = '$this->type' `field` = '$field' AND $owner");
 	}
 
 	public function updateRecord($field, $value) {
 		$field = mysql_escape_string($field);
 		$value = mysql_escape_string($value);
-		$owner = $this->table !== 'information.record' ? "AND `owner` = '$this->id'" : "AND `category` = '$this->id'";
+		$owner = $this->table !== 'information.record' ? "`owner` = '$this->id'" : "AND `category` = '$this->id'";
 		if(!is_numeric($this->id) && $this->id == '*') return false;
-		return e::$sql->query("UPDATE `$this->table` SET `value` = '$value' WHERE `field` = '$field' $owner");
+		return e::$sql->query("UPDATE `$this->table` SET `value` = '$value' WHERE `type` = '$this->type' `field` = '$field' AND $owner");
 	}
 
 	public function createRecord($field, $value) {
 		$field = mysql_escape_string($field);
 		$value = mysql_escape_string($value);
-		$owner = $this->table !== 'information.record' ? ", `owner` = '$this->id'" : ", `category` = '$this->id'";
+		$owner = $this->table !== 'information.record' ? "`owner` = '$this->id'" : ", `category` = '$this->id'";
 		if(!is_numeric($this->id) && $this->id == '*') return false;
-		return e::$sql->query("INSERT INTO `$this->table` SET `field` = '$field', `value` = '$value' $owner");
+		return e::$sql->query("INSERT INTO `$this->table` SET `field` = '$field', `value` = '$value', `type` = '$this->type', $owner");
 	}
 
 	public function __call($method, $args) {
