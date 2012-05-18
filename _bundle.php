@@ -77,7 +77,7 @@ class Accessor {
 		$value = mysql_escape_string($value);
 		$owner = $this->table !== 'information.record' ? "`owner` = '$this->id'" : "AND `category` = '$this->id'";
 		if(!is_numeric($this->id) && $this->id == '*') return false;
-		return e::$sql->query("UPDATE `$this->table` SET `value` = '$value' WHERE `type` = '$this->type' `field` = '$field' AND $owner");
+		return e::$sql->query("UPDATE `$this->table` SET `value` = '$value' WHERE `type` = '$this->type' AND `field` = '$field' AND $owner");
 	}
 
 	public function createRecord($field, $value) {
