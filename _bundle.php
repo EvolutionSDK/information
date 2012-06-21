@@ -69,7 +69,7 @@ class Accessor {
 		$field = mysql_escape_string($field);
 		$owner = $this->table !== 'information.record' ? "`owner` = '$this->id'" : "AND `category` = '$this->id'";
 		if(!is_numeric($this->id) && $this->id == '*') return false;
-		return e::$sql->query("DELETE FROM `$this->table` WHERE `type` = '$this->type' `field` = '$field' AND $owner");
+		return e::$sql->query("DELETE FROM `$this->table` WHERE `type` = '$this->type' AND `field` = '$field' AND $owner");
 	}
 
 	public function updateRecord($field, $value) {
